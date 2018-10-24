@@ -60,6 +60,7 @@ namespace bftEngine
 
 			void* p = (void*)msgBody_;
 			p = std::realloc(p, msgSize_);
+			memset(p, 0, msgSize_);
 
 			msgBody_ = (MessageBase::Header*)p;
 			storageSize_ = msgSize_;
@@ -82,7 +83,7 @@ namespace bftEngine
 		MessageBase::MessageBase(NodeIdType sender, MsgType type, MsgSize size)
 		{
 			Assert(size > 0);
-			msgBody_ = (MessageBase::Header*)std::malloc(size);
+			msgBody_ = (MessageBase::Header*)std::calloc(size);
 			storageSize_ = size;
 			msgSize_ = size;
 			owner_ = true;
