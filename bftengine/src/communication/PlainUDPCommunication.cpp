@@ -24,6 +24,8 @@
 
 #define LOG_DEBUG(txt) ;
 
+#define ILLEGAL_NODENUM ((NodeNum)-1)
+
 #if defined(_WIN32)
 #define CLOSESOCKET(x) closesocket((x));
 #else
@@ -297,8 +299,10 @@ class PlainUDPCommunication::PlainUdpImpl {
   addrToNodeId(Addr netAdress) {
     auto key = create_key(netAdress);
     auto res = addr2nodes.find(key);
-    if (res == addr2nodes.end())
-      return 0;//TBD, (IG): to change to macro of default NodeNum
+	if (res == addr2nodes.end()) {
+		LOG_DEBUG("Could not find node number for " << netAddress)
+		return ILLEGAL_NODENUM;
+	}
 
     return res->second;
   }
@@ -356,7 +360,7 @@ class PlainUDPCommunication::PlainUdpImpl {
       }
 
       auto sendingNode = addrToNodeId(fromAdress);
-      if (mLen > 0 && (receiverRef != NULL)) {
+      if (mLen > 0 && (receiverRef != NULL) && sendingNode != ILLEGAL_NODENUM) {
         receiverRef->onNewMessage(sendingNode,
                                   bufferForIncomingMessages,
                                   mLen);
