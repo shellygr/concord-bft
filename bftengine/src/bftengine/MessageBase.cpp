@@ -60,7 +60,6 @@ namespace bftEngine
 
 			void* p = (void*)msgBody_;
 			p = std::realloc(p, msgSize_);
-			memset(p, 0, msgSize_);
 
 			msgBody_ = (MessageBase::Header*)p;
 			storageSize_ = msgSize_;
